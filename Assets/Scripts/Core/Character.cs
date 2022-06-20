@@ -23,7 +23,7 @@ namespace RPG.Core
         public void TakeDamge(float damge)
         {
             health = Mathf.Max(health - damge, 0);
-            if (health == 0)
+            if (health <= 0)
             {
                 Die();
             }
