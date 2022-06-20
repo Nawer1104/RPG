@@ -1,46 +1,99 @@
 using UnityEngine;
 using RPG.Movement;
-
+using RPG.Core;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour
+    public class Fighter : MonoBehaviour, IAction
     {
         private PlayerMovement playerMovement;
+        private ActionScheduler actionScheduler;
+        private Animator animator;
 
         [SerializeField]
         float weaponRange = 2f;
-        Transform target;
+        [SerializeField]
+        float timeBetweenAttacks = 1f;
+        [SerializeField]
+        float weaponDamge = 5f;
 
 
-        bool isInRangeAttack;
-
+        Character target;
+        float timeSinceLastAttack = Mathf.Infinity;
+ 
         private void Awake()
         {
             playerMovement = GetComponent<PlayerMovement>();
+            actionScheduler = GetComponent<ActionScheduler>();
+            animator = GetComponent<Animator>();    
         }
 
         private void Update()
         {
-            isInRangeAttack = IsInRangeAttack(transform.position, target.position, weaponRange);
-            if (target != null && !isInRangeAttack)
+            timeSinceLastAttack += Time.deltaTime;
+            if (target == null) return;
+            if (target.IsDead()) return;
+
+            if (!IsInRangeAttack())
             {
-                playerMovement.MoveTo(target.position);
+                playerMovement.MoveTo(target.transform.position);
             } else
             {
-                playerMovement.Stop();
+                playerMovement.Cancel();
+                AttackBehaviour();
             }
         }
 
-        public void Attack(CombatTarget combatTarget)
+        private void AttackBehaviour()
         {
-            target = combatTarget.transform;      
+            transform.LookAt(target.transform);
+            if (timeSinceLastAttack > timeBetweenAttacks)
+            {
+                TriggerAttack();
+                timeSinceLastAttack = 0f;
+            }
         }
 
-        private bool IsInRangeAttack(Vector3 playerPos, Vector3 targetPos, float weaponRange)
+        private void TriggerAttack()
         {
-            if (Vector3.Distance(playerPos, targetPos) < weaponRange) return true;
-            return false;
+            animator.ResetTrigger("stopAttack");
+            animator.SetTrigger("attack");
+        }
+
+        public bool CanAttack(GameObject combatTarget)
+        {
+            if (combatTarget == null) return false;
+            Character enemyToTest = combatTarget.GetComponent<Character>();
+            return enemyToTest != null && !enemyToTest.IsDead();
+        }
+        public void Attack(GameObject combatTarget)
+        {
+            actionScheduler.StartAction(this);
+            target = combatTarget.GetComponent<Character>();      
+        }
+
+        private bool IsInRangeAttack()
+        {
+            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+        }
+
+        public void Cancel()
+        {
+            StopAttack();
+            target = null;
+        }
+
+        private void StopAttack()
+        {
+            animator.ResetTrigger("attack");
+            animator.SetTrigger("stopAttack");
+        }
+
+        // Animation Event
+        void Hit ()
+        {
+            if (target == null) return;
+            target.TakeDamge(weaponDamge);
         }
     }
 }
