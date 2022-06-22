@@ -11,11 +11,15 @@ namespace RPG.Combat
         private Animator animator;
 
         [SerializeField]
-        float weaponRange = 2f;
+        private float weaponRange = 2f;
         [SerializeField]
-        float timeBetweenAttacks = 1f;
+        private float timeBetweenAttacks = 1f;
         [SerializeField]
-        float weaponDamge = 5f;
+        private float weaponDamge = 5f;
+        [SerializeField]
+        private GameObject weaponPreb = null;
+        [SerializeField]
+        private Transform handTransform = null;
 
 
         Character target;
@@ -25,7 +29,14 @@ namespace RPG.Combat
         {
             playerMovement = GetComponent<PlayerMovement>();
             actionScheduler = GetComponent<ActionScheduler>();
-            animator = GetComponent<Animator>();    
+            animator = GetComponent<Animator>();
+            SpawnWeapon();
+
+        }
+
+        private void SpawnWeapon()
+        {
+            Instantiate(weaponPreb, handTransform);
         }
 
         private void Update()
