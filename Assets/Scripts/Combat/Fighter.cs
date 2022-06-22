@@ -9,34 +9,30 @@ namespace RPG.Combat
         private PlayerMovement playerMovement;
         private ActionScheduler actionScheduler;
         private Animator animator;
-
+         
         [SerializeField]
-        private float weaponRange = 2f;
-        [SerializeField]
-        private float timeBetweenAttacks = 1f;
-        [SerializeField]
-        private float weaponDamge = 5f;
-        [SerializeField]
-        private GameObject weaponPreb = null;
+        private Weapon defaultWeapon = null;
         [SerializeField]
         private Transform handTransform = null;
 
 
-        Character target;
-        float timeSinceLastAttack = Mathf.Infinity;
+        private Weapon currentWeapon = null;
+        private Character target;
+        private float timeSinceLastAttack = Mathf.Infinity;
  
         private void Awake()
         {
             playerMovement = GetComponent<PlayerMovement>();
             actionScheduler = GetComponent<ActionScheduler>();
             animator = GetComponent<Animator>();
-            SpawnWeapon();
-
+            
+            EquipWeapon(defaultWeapon);
         }
 
-        private void SpawnWeapon()
+        public void EquipWeapon(Weapon weapon)
         {
-            Instantiate(weaponPreb, handTransform);
+            currentWeapon = weapon;
+            weapon.Spawn(handTransform, animator);
         }
 
         private void Update()
@@ -58,7 +54,7 @@ namespace RPG.Combat
         private void AttackBehaviour()
         {
             transform.LookAt(target.transform);
-            if (timeSinceLastAttack > timeBetweenAttacks)
+            if (timeSinceLastAttack > currentWeapon.GetTimeBetweenAttacks())
             {
                 TriggerAttack();
                 timeSinceLastAttack = 0f;
@@ -85,7 +81,7 @@ namespace RPG.Combat
 
         private bool IsInRangeAttack()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.GetRange();
         }
 
         public void Cancel()
@@ -104,7 +100,7 @@ namespace RPG.Combat
         void Hit ()
         {
             if (target == null) return;
-            target.TakeDamge(weaponDamge);
+            target.TakeDamge(currentWeapon.GetDamge());
         }
     }
 }
