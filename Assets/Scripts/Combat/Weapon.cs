@@ -1,3 +1,5 @@
+using RPG.Core;
+using System;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -15,17 +17,69 @@ namespace RPG.Combat
         private float weaponDamge = 5f;
         [SerializeField]
         private float timeBetweenAttacks = 1f;
+        [SerializeField]
+        private bool isRightHanded = true;
+        [SerializeField]
+        private Projectile projectile = null;
 
-        public void Spawn(Transform handTransform, Animator anim)
+        const string weaponName = "Weapon(Clone)"; 
+
+        public void Spawn(Transform rightHand, Transform leftHand, Animator anim)
         {
+            DestroyOldWeapon(rightHand, leftHand);
+
             if (weaponPreb != null)
             {
+                Transform handTransform = GetTransform(rightHand, leftHand);
                 Instantiate(weaponPreb, handTransform);
-            }     
+            }
             if (animatorOverride != null)
             {
                 anim.runtimeAnimatorController = animatorOverride;
             }      
+        }
+
+        private void DestroyOldWeapon(Transform rightHand, Transform leftHand)
+        {
+            Transform oldWeapon = rightHand.Find(weaponName);
+            Debug.Log(oldWeapon);
+            if (oldWeapon == null)
+            {
+                oldWeapon = leftHand.Find(weaponName);
+            }
+
+            if (oldWeapon == null) return;
+
+            oldWeapon.name = "DESTROYING";
+            Destroy(oldWeapon.gameObject);
+        }
+
+        private Transform GetTransform(Transform rightHand, Transform leftHand)
+        {
+            Transform handTransform;
+            if (isRightHanded)
+            {
+                handTransform = rightHand;
+                
+            }
+            else
+            {
+                handTransform = leftHand;
+            }
+
+            return handTransform;
+        }
+
+        public bool HasProjectile()
+        {
+            return projectile != null;
+        }
+
+
+        public void LaunchProjectile(Transform rightHand, Transform leftHand, Character target)
+        {
+            Projectile projectileInstance = Instantiate(projectile, GetTransform(rightHand, leftHand).position, Quaternion.identity);
+            projectileInstance.SetTarget(target, weaponDamge);
         }
 
         public float GetDamge() { return weaponDamge; }

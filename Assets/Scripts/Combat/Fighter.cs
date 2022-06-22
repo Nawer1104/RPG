@@ -13,7 +13,9 @@ namespace RPG.Combat
         [SerializeField]
         private Weapon defaultWeapon = null;
         [SerializeField]
-        private Transform handTransform = null;
+        private Transform rightHandTransform = null;
+        [SerializeField]
+        private Transform leftHandTransform = null;
 
 
         private Weapon currentWeapon = null;
@@ -32,7 +34,7 @@ namespace RPG.Combat
         public void EquipWeapon(Weapon weapon)
         {
             currentWeapon = weapon;
-            weapon.Spawn(handTransform, animator);
+            weapon.Spawn(rightHandTransform, leftHandTransform, animator);
         }
 
         private void Update()
@@ -100,7 +102,15 @@ namespace RPG.Combat
         void Hit ()
         {
             if (target == null) return;
-            target.TakeDamge(currentWeapon.GetDamge());
+
+            if (currentWeapon.HasProjectile())
+            {
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target);
+
+            } else
+            {
+                target.TakeDamge(currentWeapon.GetDamge());
+            }          
         }
     }
 }

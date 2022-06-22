@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd59652637f353748875f4e5a4a63493, type: 3}
-  m_Name: Sword
+  m_Name: CommonShuriken
   m_EditorClassIdentifier: 
-  weaponPreb: {fileID: 7956046857171082036, guid: 9443a9b83f5295946a23164f9e4915e0, type: 3}
-  animatorOverride: {fileID: 22100000, guid: fa8839492cf720142b490c46cbb0c1db, type: 2}
-  weaponRange: 2
-  weaponDamge: 5
+  weaponPreb: {fileID: 5561828574275716140, guid: 46ab797681a8ca44c9142f2fc8289942, type: 3}
+  animatorOverride: {fileID: 22100000, guid: ea40d604c78fba044af6d9f6cf70711d, type: 2}
+  weaponRange: 15
+  weaponDamge: 3
   timeBetweenAttacks: 1
+  isRightHanded: 0
+  projectile: {fileID: -1458322337256108817, guid: 9311c28c35b41af41b2224bef5c9b78a, type: 3}
