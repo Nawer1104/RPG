@@ -28,7 +28,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6671597505341508384}
   m_Father: {fileID: 0}
@@ -46,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edce77d05865b8d478a11de3d6253258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 40
+  speed: 50
+  hitEffect: {fileID: 132352, guid: 71b02155078e4bf4e962f302d3675af2, type: 3}
 --- !u!65 &7682780571200875727
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ namespace RPG.Combat
         [SerializeField]
         private GameObject weaponPreb = null;
         [SerializeField]
-        AnimatorOverrideController animatorOverride = null;
+        private AnimatorOverrideController animatorOverride = null;
         [SerializeField]
         private float weaponRange = 2f;
         [SerializeField]
@@ -33,10 +33,15 @@ namespace RPG.Combat
                 Transform handTransform = GetTransform(rightHand, leftHand);
                 Instantiate(weaponPreb, handTransform);
             }
+
+            var overrideController = anim.runtimeAnimatorController as AnimatorOverrideController;
             if (animatorOverride != null)
             {
                 anim.runtimeAnimatorController = animatorOverride;
-            }      
+            } else if (overrideController != null)
+            {
+                anim.runtimeAnimatorController = overrideController.runtimeAnimatorController;
+            }
         }
 
         private void DestroyOldWeapon(Transform rightHand, Transform leftHand)
